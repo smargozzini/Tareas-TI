@@ -1,0 +1,36 @@
+
+
+<%= form_tag(search_path(:search), method: :get) do %>
+<%= text_field_tag(:search, params[:search]) %>
+<%= submit_tag('Search') %>
+<% end %>
+
+<center>
+<h1>Star wars</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Director</th>
+            <th>Producer</th>
+            <th>Episode</th>
+            <th>More</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @movies['results'].each do |movie|%>
+        <tr>
+            <td><%= movie['title'] %></td>
+            <td><%= movie['release_date'] %></td>
+            <td><%= movie['director'] %></td>
+            <td><%= movie['producer'] %></td>
+            <td><%= movie['episode_id'] %></td>
+            <td><%= link_to 'More info', movie_path(movie['episode_id']) %></td>
+        </tr>
+        <% end %>
+    </tbody>
+</table> 
+</center>

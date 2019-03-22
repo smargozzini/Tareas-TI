@@ -1,0 +1,76 @@
+<%= form_tag(search_path(:search), method: :get) do %>
+  <%= text_field_tag(:search, params[:search]) %>
+  <%= submit_tag('Search') %>
+  <% end %>
+
+<center>
+    <h1><%= @planet['name'] %></h1>
+    
+    <% movies = [] %>
+    <% @planet['films'].each do |f| %>
+      <% f = f + '?format=json' %>
+      <% film = HTTParty.get(f) %>
+      <% movies.push(film) %>
+      <% end %>
+    
+    <% people = [] %>
+    <% @planet['residents'].each do |r| %>
+    <% r = r + '?format=json' %>
+    <% resident = HTTParty.get(r) %>
+    <% people.push(resident) %>
+    <% end %>
+    
+    <table border="1"> 
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Diameter</th>
+                <th>Rotation period</th>
+                <th>Orbital period</th>
+                <th>Gravity</th>
+                <th>Population</th>
+                <th>Climate</th>
+                <th>Terrain</th>
+                <th>Surface water</th>
+            </tr>
+        </thead>
+    
+        <tbody>
+            <tr>
+                <td><%= @planet['name'] %></td>
+                <td><%= @planet['diameter'] %></td>
+                <td><%= @planet['rotation_period'] %></td>
+                <td><%= @planet['orbital_period'] %></td>
+                <td><%= @planet['gravity'] %></td>
+                <td><%= @planet['population'] %></td>
+                <td><%= @planet['climate'] %></td>
+                <td><%= @planet['terrain'] %></td>
+                <td><%= @planet['surface_water'] %></td>
+            </tr>
+        </tbody>
+    </table> 
+    
+    <table border="1">
+      <thead>
+          <tr>
+            <th>Films</th>
+            <th>Residents</th>
+            <th>Edited</th>
+          </tr>
+      </thead>
+    
+      <tbody>
+          <tr>
+            <td><% movies.each do |m|%>
+              <li><%= link_to m['title'], movie_path(m['episode_id']) %> </li>
+              <% end %></td>
+            <td><% people.each do |p|%>
+                <% b = p['url'] %>
+                <% b = b.split('/') %>
+                <li> <%= link_to p['name'], character_path(b[-1]) %> </li>
+                <% end %></td>
+            <td><%= @planet['edited'] %></td>
+          </tr>
+      </tbody>
+    </table> 
+    </center>

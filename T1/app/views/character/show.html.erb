@@ -1,0 +1,82 @@
+
+<%= form_tag(search_path(:search), method: :get) do %>
+<%= text_field_tag(:search, params[:search]) %>
+<%= submit_tag('Search') %>
+<% end %>
+
+<center>
+<h1><%= @character['name'] %></h1>
+
+<% movies = [] %>
+<% @character['films'].each do |f| %>
+  <% f = f + '?format=json' %>
+  <% film = HTTParty.get(f) %>
+  <% movies.push(film) %>
+  <% end %>
+
+<% ships = [] %>
+<% @character['starships'].each do |s| %>
+<% s = s + '?format=json' %>
+<% ship = HTTParty.get(s) %>
+<% ships.push(ship) %>
+<% end %>
+
+<% w = @character['homeworld'] + '?format=json' %>
+<% world = HTTParty.get(w) %>
+<% id = world['url'] %>
+<% id = id.split('/')[-1] %>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Birth year</th>
+            <th>Eye color</th>
+            <th>Gender</th>
+            <th>Hair color</th>
+            <th>Height</th>
+            <th>Mass</th>
+            <th>Skin color</th>
+            <th>Homeworld</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td><%= @character['birth_year'] %></td>
+            <td><%= @character['eye_color'] %></td>
+            <td><%= @character['gender'] %></td>
+            <td><%= @character['hair_color'] %></td>
+            <td><%= @character['height'] %></td>
+            <td><%= @character['mass'] %></td>
+            <td><%= @character['skin_color'] %></td>
+            <td><%= link_to world['name'], planets_path(id) %></td>
+        </tr>
+    </tbody>
+</table> 
+
+<table border="1">
+  <thead>
+      <tr>
+        <th>Films</th>
+        <th>Starships</th>
+        <th>created</th>
+        <th>edited</th>
+      </tr>
+  </thead>
+
+  <tbody>
+      <tr>
+        <td><% movies.each do |m|%>
+            <li><%= link_to m['title'], movie_path(m['episode_id']) %></li>
+          <% end %></td>
+        <td><% ships.each do |s|%>
+            <% id = s['url'] %>
+            <% id = id.split('/')[-1] %>
+            <li><%= link_to s['name'], starships_path(id) %></li>
+            <% end %></td>
+        <td><%= @character['created'] %></td>
+        <td><%= @character['edited'] %></td>
+      </tr>
+  </tbody>
+</table> 
+</center>

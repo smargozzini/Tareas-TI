@@ -1,0 +1,92 @@
+<%= form_tag(search_path(:search), method: :get) do %>
+  <%= text_field_tag(:search, params[:search]) %>
+  <%= submit_tag('Search') %>
+  <% end %>
+
+<center>
+<h1><%= @movie['title'] %></h1>
+
+<% characters = [] %>
+<% @movie['characters'].each do |c| %>
+  <% c = c + '?format=json' %>
+  <% character = HTTParty.get(c) %>
+  <% characters.push(character) %>
+  <% end %>
+
+<% ships = [] %>
+<% @movie['starships'].each do |s| %>
+  <% s = s + '?format=json' %>
+  <% ship = HTTParty.get(s) %>
+  <% ships.push(ship) %>
+  <% end %>
+
+<% planets = [] %>
+<% @movie['planets'].each do |p| %>
+  <% p = p + '?format=json' %>
+  <% planet = HTTParty.get(p) %>
+  <% planets.push(planet) %>
+  <% end %>
+
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Director</th>
+            <th>Producer</th>
+            <th>Episode</th>
+            <th>Release date</th>
+            <th>Starships</th>
+            <th>Planets</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td><%= @movie['title'] %></td>
+            <td><%= @movie['release_date'] %></td>
+            <td><%= @movie['director'] %></td>
+            <td><%= @movie['producer'] %></td>
+            <td><%= @movie['episode_id'] %></td>
+            <td><%= @movie['release_date'] %></td>
+            <td><% ships.each do |s|%>
+              <% id = s['url'] %>
+              <% id = id.split('/')[-1] %>
+              <li><%= link_to s['name'], starships_path(id) %></li>
+              <% end %></td>
+            <td><% planets.each do |p|%>
+              <% id2 = p['url'] %>
+              <% id2 = id2.split('/')[-1] %>
+              <li><%= link_to p['name'], planets_path(id2) %></li>
+              <% end %></td>
+        </tr>
+    </tbody>
+</table> 
+
+<table border="1">
+  <thead>
+      <tr>
+        <th>Characters</th>
+        <th>Opening crawl</th>
+        <th>Created</th>
+        <th>Edited</th>
+        <th>Url</th>
+      </tr>
+  </thead>
+
+  <tbody>
+      <tr>
+        <td><% characters.each do |char|%>
+          <% b = char['url'] %>
+          <% b = b.split('/') %>
+        <li><%= link_to char['name'], character_path(b[-1]) %></li>
+          <% end %></td>
+        <td width="500"><%= @movie['opening_crawl'] %></td>
+        <td><%= @movie['created'] %></td>
+        <td><%= @movie['edited'] %></td>
+        <td><%= @movie['url'] %></td>
+      </tr>
+  </tbody>
+</table> 
+</center>

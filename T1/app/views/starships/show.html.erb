@@ -1,0 +1,83 @@
+
+<%= form_tag(search_path(:search), method: :get) do %>
+  <%= text_field_tag(:search, params[:search]) %>
+  <%= submit_tag('Search') %>
+  <% end %>
+  
+<center>
+    <h2><%= @starship['name'] %></h2>
+    
+    <% movies = [] %>
+    <% @starship['films'].each do |f| %>
+      <% f = f + '?format=json' %>
+      <% film = HTTParty.get(f) %>
+      <% movies.push(film) %>
+      <% end %>
+    
+    <% pilots = [] %>
+    <% @starship['pilots'].each do |r| %>
+    <% r = r + '?format=json' %>
+    <% pilot = HTTParty.get(r) %>
+    <% pilots.push(pilot) %>
+    <% end %>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Model</th>
+                <th>Starship class</th>
+                <th>Manufacturer</th>
+                <th>Cost in credits</th>
+                <th>Length</th>
+                <th>Crew</th>
+                <th>Passengers</th>
+                <th>Max atmosphering spped</th>
+                <th>Hyperdrive rating</th>
+            </tr>
+        </thead>
+    
+        <tbody>
+            <tr>
+                <td><%= @starship['name'] %></td>
+                <td><%= @starship['model'] %></td>
+                <td><%= @starship['starship_class'] %></td>
+                <td><%= @starship['manufacturer'] %></td>
+                <td><%= @starship['cost_in_credits'] %></td>
+                <td><%= @starship['length'] %></td>
+                <td><%= @starship['crew'] %></td>
+                <td><%= @starship['passengers'] %></td>
+                <td><%= @starship['max_atmosphering_speed'] %></td>
+                <td><%= @starship['hyperdrive_rating'] %></td>
+            </tr>
+        </tbody>
+    </table> 
+    
+    <table border="1">
+      <thead>
+          <tr>
+            <th>MGLT</th>
+            <th>Cargo capacity</th>
+            <th>Consumables</th>
+            <th>Films</th>
+            <th>Pilots</th>
+          </tr>
+      </thead>
+    
+      <tbody>
+          <tr>
+            <td><%= @starship['MGLT'] %></td>
+            <td><%= @starship['cargo_capacity'] %></td>
+            <td><%= @starship['consumables'] %></td>
+            <td><% movies.each do |m|%>
+              <li><%= link_to m['title'], movie_path(m['episode_id']) %></li>
+              <% end %></td>
+            <td><% pilots.each do |p|%>
+                <% b = p['url'] %>
+                <% b = b.split('/') %>
+                <li><%= link_to p['name'], character_path(b[-1]) %></li>
+                <% end %></td>
+          </tr>
+      </tbody>
+    </table> 
+    </center>
